@@ -1,6 +1,7 @@
 const fileModel = require('../modules/files');
 const userModel = require('../schema/user');
 const result = require('../utils/result');
+const UserModel = require('../modules/user');
 const crypto = require('crypto')
 const fs = require('fs')
 const path = require('path');
@@ -120,11 +121,22 @@ class FilesController {
   static async adminList(ctx, next) {
     const query = ctx.request.body
     const role = ctx.state.userInfo.role
+    let {uploader} = query
+    let user = await UserModel.findUser({name:uploader})
+    console.log(user)
+    delete query.uploader
     if (role === 'admin') {
-      let list = await fileModel.findList({
-        ...query,
-        // isDeleted: false
-      });
+      let list = null
+      if(user &&user.length!==0){
+        list = await fileModel.findList({
+          ...query,
+          userId:user.id,
+        });
+      }else{
+        list = await fileModel.findList({
+          ...query,
+        });
+      }
       ctx.body = result({list},'查询成功')
     } else {
       ctx.body = result(null,'无权限操作', false)
