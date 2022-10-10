@@ -25,6 +25,10 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true,
       defaultValue: 'user'
     },
+    email: {
+      type: DataTypes.STRING(255),
+      allowNull: false
+    },
     createdAt: {
       type: DataTypes.DATE,
       get() {

@@ -1,34 +1,34 @@
-const sequelize= require('../config/db');
+const sequelize = require('../config/db');
 const User = sequelize.import('../schema/user');
 const Files = sequelize.import('../schema/files');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 // 通过 sync 方法同步数据结构
 // 即,创建表
-User.sync({force: false})
+User.sync({ force: false })
 User.hasMany(Files)
 
 
-class UserModel{
-  static async findUser(query, attributes){
+class UserModel {
+  static async findUser(query, attributes) {
     return await User.findOne({
       where: query,
       attributes: attributes,
     })
   }
-  
-  static async getUserInfo(query){
+
+  static async getUserInfo(query) {
     return await User.findOne({
       attributes: { exclude: ['password'] },
       where: query,
     })
   }
-  
-  static async create(userInfo){
+
+  static async create(userInfo) {
     return await User.create(userInfo)
   }
-  
-  static async resetPassword(userInfo, newPassword){
+
+  static async resetPassword(userInfo, newPassword) {
     const { id } = userInfo
     return await User.update({
       password: newPassword
@@ -38,34 +38,34 @@ class UserModel{
       }
     })
   }
-  
-  static async update(data){
+
+  static async update(data) {
     const id = data.id
-    return await User.update(data,{
-      where:{
+    return await User.update(data, {
+      where: {
         id
       }
     })
   }
-  
-  static async findAllUserList(query){
+
+  static async findAllUserList(query) {
     return await User.findAll({
       where: {
         ...query,
         name: {
-          [Op.like]:'%' +query.name + '%'
+          [Op.like]: '%' + query.name + '%'
         },
         phone: {
-          [Op.like]:'%' +query.phone + '%'
+          [Op.like]: '%' + query.phone + '%'
         },
       },
-      
+
       // attributes: ['id', 'username'],
     })
   }
-  
-  static async adminList(conditions){
-    let { name='', pageNo = 1, start, end, pageSize = 100, ...rest } = conditions
+
+  static async adminList(conditions) {
+    let { name = '', pageNo = 1, start, end, pageSize = 100, ...rest } = conditions
     let offset = (pageNo - 1) * pageSize;
     return await User.findAndCountAll({
       attributes: {
@@ -73,7 +73,7 @@ class UserModel{
       },
       where: {
         name: {
-          [Op.like]:'%' +name + '%'
+          [Op.like]: '%' + name + '%'
         },
         isDeleted: 0,
         ...rest
@@ -88,4 +88,4 @@ class UserModel{
     })
   }
 }
-module.exports =  UserModel
+module.exports = UserModel

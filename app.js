@@ -5,27 +5,27 @@ const views = require('koa-views')
 const json = require('koa-json')
 const jwt = require('jsonwebtoken')
 const koajwt = require('koa-jwt')
+// const redisStore = require('koa-redis')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
-
+// const { } = require('./config/cache')
 
 const user = require('./routes/user')
 const files = require('./routes/files')
 const staticFile = require('./routes/static')
 
 const SECRET = 'secret'; // demo，可更换
-
+let map = new Map()
 
 // error handler
 onerror(app)
-
 app.use(cors());
 
 // middlewares 第二步:app.use()传入中间件
 app.use(bodyparser({
-  enableTypes:['json', 'form', 'text'],
-  
+  enableTypes: ['json', 'form', 'text'],
+
 }))
 app.use(json())
 app.use(logger())
@@ -36,7 +36,7 @@ app.use(views(__dirname + '/views', {
 
 logger
 app.use(async (ctx, next) => {
-  await next().catch(err=>{
+  await next().catch(err => {
     if (err.message === 'jwt expired') {
       ctx.body = {
         code: 401,
@@ -49,11 +49,11 @@ app.use(async (ctx, next) => {
   })
 })
 
-app.use(async(ctx, next)=> {
+app.use(async (ctx, next) => {
   const token = ctx.cookies.get('netdisk-token');
-  if(!token){
+  if (!token) {
     await next();
-  }else{
+  } else {
     const userInfo = jwt.verify(token, SECRET)
     ctx.state = {
       userInfo
@@ -80,7 +80,7 @@ app.use(async(ctx, next)=> {
 //   })
 // });
 
-app.use(koajwt({ secret: SECRET, cookie: 'netdisk-token'}).unless({
+app.use(koajwt({ secret: SECRET, cookie: 'netdisk-token' }).unless({
   // 登录，注册接口不需要验证
   path: [/^\/user\/login/, /^\/user\/register/, /^\/file\/shareDetail/, /^\/static/]
 }));
