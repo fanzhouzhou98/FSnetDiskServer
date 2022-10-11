@@ -9,41 +9,48 @@ class UserController {
   static async register(ctx, next) {
     const user = ctx.request.body;
 
-    const { name } = user
-    if (name) {
-      // 查询用户名是否重复
-      const existUser = await userModel.findUser({ name })
-      if (existUser && existUser.length !== 0) {
-        // 反馈存在用户名
-        ctx.body = result(null, '用户已存在', false)
-      } else {
-        // 加密密码
-        const salt = bcrypt.genSaltSync();  // 密码加密的计算强度默认10级
-        const hash = bcrypt.hashSync(user.password, salt);
-        user.password = hash;
+    const { name, code, email, password } = user
+    let key = email.split('@')[0]
+    let { pwd } = await get(key)
+    if (code == pwd) {
+      if (name) {
+        // 查询用户名是否重复
+        const existUser = await userModel.findUser({ name })
+        if (existUser && existUser.length !== 0) {
+          // 反馈存在用户名
+          ctx.body = result(null, '用户已存在', false)
+        } else {
+          // 加密密码
+          const salt = bcrypt.genSaltSync();  // 密码加密的计算强度默认10级
+          const hash = bcrypt.hashSync(user.password, salt);
+          user.password = hash;
 
-        // 创建用户
-        await userModel.create(user);
-        let newUser = await userModel.findUser({ name })
+          // 创建用户
+          await userModel.create(user);
+          let newUser = await userModel.findUser({ name })
 
-        // 签发token
-        const userToken = {
-          name,
-          id: newUser.id,
-          role: newUser.role
+          // 签发token
+          const userToken = {
+            name,
+            id: newUser.id,
+            role: newUser.role
+          }
+
+          // 储存token失效有效期1小时
+          const token = jwt.sign(userToken, secret.sign, { expiresIn: '2d' });
+
+          ctx.body = result({
+            token,
+            newUser
+          }, '创建用户成功')
         }
-
-        // 储存token失效有效期1小时
-        const token = jwt.sign(userToken, secret.sign, { expiresIn: '2d' });
-
-        ctx.body = result({
-          token,
-          newUser
-        }, '创建用户成功')
+      } else {
+        ctx.body = result(null, '创建失败，参数错误', false);
       }
     } else {
-      ctx.body = result(null, '创建失败，参数错误', false);
+      ctx.body = result(null, '验证码错误', false);
     }
+
   }
 
   static async list(ctx, next) {
