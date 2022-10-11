@@ -11,6 +11,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "debug": "^2.6.3",
+    "diskinfo": "^0.0.3",
     "jsonwebtoken": "^8.4.0",
     "koa": "^2.2.0",
     "koa-bodyparser": "^3.2.0",

@@ -1,6 +1,6 @@
 const router = require('koa-router')()
 const Controller = require('../controllers/files')
-const multer=require('koa-multer')
+const multer = require('koa-multer')
 const storage = multer.diskStorage({
   //文件保存路径
   destination: function (req, file, cb) {
@@ -9,11 +9,11 @@ const storage = multer.diskStorage({
   //修改文件名称
   filename: function (req, file, cb) {
     var fileFormat = (file.originalname).split(".");  //以点分割成数组，数组的最后一项就是后缀名
-    cb(null,Date.now() + "." + fileFormat[fileFormat.length - 1]);
+    cb(null, Date.now() + "." + fileFormat[fileFormat.length - 1]);
   },
-  
-  
-  
+
+
+
 })
 //加载配置
 const upload = multer({ storage: storage });
@@ -25,9 +25,10 @@ router.post('/list', Controller.list);
 router.post('/adminList', Controller.adminList);
 router.post('/shareList', Controller.shareList);
 router.post('/delete', Controller.delete);
-router.post('/restore',Controller.restore)
+router.post('/restore', Controller.restore)
 router.post('/update', Controller.update);
 router.post('/createShare', Controller.createShare);
 router.post('/shareDetail', Controller.shareDetail);
-router.post('/deleteFile',Controller.deleteFile)
+router.post('/deleteFile', Controller.deleteFile)
+router.get('/getDiskInfo', Controller.getDiskInfo)
 module.exports = router;

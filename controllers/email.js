@@ -12,8 +12,8 @@ class EmailController {
         let pwd = getRandom()
         let user = email.split('@')[0];
         let info = await get(user)
-        if (info && info.count >= 5) {
-            ctx.body = result(null, '今日发送次数超过上限！', false)
+        if (info && info.count >= 3) {
+            ctx.body = result(null, '操作频繁，请5分钟后再获取验证码', false)
             return
         }
 
