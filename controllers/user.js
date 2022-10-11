@@ -4,7 +4,7 @@ const koajwt = require('koa-jwt')
 const secret = require('../config/secret');
 const userModel = require('../modules/user');
 const result = require('../utils/result');
-
+const { get, set } = require('../utils/redis')
 class UserController {
   static async register(ctx, next) {
     const user = ctx.request.body;
@@ -134,6 +134,15 @@ class UserController {
       ctx.body = result(null, "用户信息不存在", false)
     }
   }
+  static async getUserEmailByName(ctx, next) {
+    let query = ctx.request.body
+    let userInfo = await userModel.getUserInfo(query)
+    if (userInfo) {
+      ctx.body = result({ email: userInfo.email }, '查询成功')
+    } else {
+      ctx.body = result(null, "用户信息不存在", false)
+    }
+  }
   static async updateUserPassword(ctx, next) {
     const data = ctx.request.body
     let { password, name, id, newPassword } = data
@@ -150,16 +159,19 @@ class UserController {
   }
   static async resetPasswordByCode(ctx, next) {
     const data = ctx.request.body
-    let { password, name, id, newPassword } = data
+    let { name, newPassword, code, email } = data
+    email = email.split('@')[0]
+    let { pwd, count } = await get(email)
     const user = await userModel.findUser({ name });
-    if (bcrypt.compareSync(password, user.password)) {
+    if (code == pwd) {
       const salt = bcrypt.genSaltSync();  // 密码加密的计算强度默认10级
       const hash = bcrypt.hashSync(newPassword, salt);
       newPassword = hash
       await userModel.resetPassword(user, newPassword)
+      await set(email, { pwd: '', count })
       ctx.body = result(true, '密码修改成功')
     } else {
-      ctx.body = result(false, '密码错误', false)
+      ctx.body = result(false, '验证码错误', false)
     }
   }
   static async delete(ctx, next) {

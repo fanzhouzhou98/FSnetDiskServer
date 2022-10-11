@@ -24,4 +24,6 @@ router.post('/update', UserController.update);
 router.post('/resetPassword', UserController.updateUserPassword)
 router.post('/updateUserName', UserController.updateUserName)
 router.post('/sendVerifyCode', EmailController.sendVerifyCode)
+router.post('/getUserEmailByName', UserController.getUserEmailByName)
+router.post('/resetPasswordByCode', UserController.resetPasswordByCode)
 module.exports = router

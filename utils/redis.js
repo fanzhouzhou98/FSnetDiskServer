@@ -7,7 +7,7 @@ const redis = require('redis')
 const { REDIS_CONF } = require('../config/cache')
 
 // 创建客户端
-const redisClient = redis.createClient(REDIS_CONF.port, REDIS_CONF.host)
+const redisClient = redis.createClient({ url: 'redis://127.0.0.1:6379', })
 redisClient.on('error', err => {
     console.error('redis error', err)
 })
@@ -22,6 +22,7 @@ function set(key, val, timeout = 60 * 60) {
     if (typeof val === 'object') {
         val = JSON.stringify(val)
     }
+
     redisClient.set(key, val)
     redisClient.expire(key, timeout)
 }
@@ -31,8 +32,9 @@ function set(key, val, timeout = 60 * 60) {
  * @param {string} key 键
  */
 function get(key) {
-    const promise = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         redisClient.get(key, (err, val) => {
+            console.log(val)
             if (err) {
                 reject(err)
                 return
@@ -51,7 +53,6 @@ function get(key) {
             }
         })
     })
-    return promise
 }
 
 module.exports = {
