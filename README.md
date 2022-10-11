@@ -12,4 +12,4 @@
 4.安装redis
 5.在项目`config/cache.js`里修改自己redis配置
 6.在项目`config/email.js`里修改自己的邮件配置
-4. `yarn add `安装依赖之后`yarn run dev`启动
+7. `yarn add `安装依赖之后`yarn run dev`启动
