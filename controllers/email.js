@@ -9,7 +9,8 @@ const getRandom = () => {
 class EmailController {
     static async sendVerifyCode(ctx, next) {
         let { email } = ctx.request.body
-        let pwd = getRandom()
+        let pwd = null
+        pwd = getRandom()
         let user = email.split('@')[0];
         let info = await get(user)
         if (info && info.count >= 3) {
@@ -30,7 +31,6 @@ class EmailController {
         } else if (data.status == 0) {
             ctx.body = result(null, data.message, false)
         }
-        pwd = null
     }
 }
 module.exports = EmailController
