@@ -83,14 +83,7 @@ app.use(async (ctx, next) => {
 app.use(koajwt({ secret: SECRET, cookie: 'netdisk-token' }).unless({
   // 登录，注册接口不需要验证
 
-  path: [
-    /^\/user\/login/,
-    /^\/user\/register/,
-    /^\/user\/getUserEmailByName/,
-    /^\/user\/sendVerifyCode /,
-    /^\/file\/shareDetail/,
-    /^\/static/
-  ]
+  path: [/^\/user\/login/, /^\/user\/register/, /^\/user\/getUserEmailByName/, /^\/user\/sendVerifyCode/, /^\/file\/shareDetail/, /^\/static/]
 }));
 
 // routes
