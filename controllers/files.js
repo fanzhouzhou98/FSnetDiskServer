@@ -88,6 +88,7 @@ class FilesController {
     const role = ctx.state.userInfo.role
     const id = ctx.state.userInfo.id
     const newData = ctx.request.body;
+    console.log(newData)
     if (role === 'admin' || newData.userId === id) {
       await fileModel.update(newData);
       ctx.body = result(null, '更新成功')
