@@ -1,4 +1,4 @@
-const fileModel = require('../modules/files');
+const fileModel = require('../services/files');
 const userModel = require('../schema/user');
 const result = require('../utils/result');
 const UserModel = require('../services/user');
