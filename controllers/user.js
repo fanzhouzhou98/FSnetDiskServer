@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs'); // 密码加密
 const jwt = require('jsonwebtoken'); // 签发token给前端
 const koajwt = require('koa-jwt')
 const secret = require('../config/secret');
-const userModel = require('../modules/user');
+const userModel = require('../services/user');
 const result = require('../utils/result');
 const { get, set } = require('../utils/redis')
 class UserController {
